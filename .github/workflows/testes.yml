@@ -1,0 +1,119 @@
+name: Testes e Qualidade
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  unit-tests:
+    name: 1 - Testes unitarios
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Executar testes unitarios
+        run: python -m pytest tests/test_pedidos.py -q --no-cov
+
+  coverage:
+    name: 2 - Cobertura de testes
+    runs-on: ubuntu-latest
+    needs: unit-tests
+
+    steps:
+      - name: Baixar codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Executar cobertura
+        run: python -m pytest --cov=app --cov-report=term-missing
+
+  lint:
+    name: 3 - Analise estatica Ruff
+    runs-on: ubuntu-latest
+    needs: coverage
+
+    steps:
+      - name: Baixar codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Rodar Ruff
+        run: ruff check .
+
+  smoke-test:
+    name: 4 - Smoke test CLI
+    runs-on: ubuntu-latest
+    needs: lint
+
+    steps:
+      - name: Baixar codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Executar CLI principal
+        run: python -m app.cli --preco 100 --quantidade 2 --desconto 10 --cupom DEVOPS10
+
+  status-check:
+    name: 5 - Gate final de qualidade
+    runs-on: ubuntu-latest
+    needs:
+      - unit-tests
+      - coverage
+      - lint
+      - smoke-test
+    if: always()
+
+    steps:
+      - name: Validar resultado dos jobs anteriores
+        run: |
+          echo 'unit-tests: ${{ needs.unit-tests.result }}'
+          echo 'coverage: ${{ needs.coverage.result }}'
+          echo 'lint: ${{ needs.lint.result }}'
+          echo 'smoke-test: ${{ needs.smoke-test.result }}'
+          test '${{ needs.unit-tests.result }}' = 'success'
+          test '${{ needs.coverage.result }}' = 'success'
+          test '${{ needs.lint.result }}' = 'success'
+          test '${{ needs.smoke-test.result }}' = 'success'
