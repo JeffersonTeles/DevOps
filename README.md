@@ -1,5 +1,13 @@
 # 🚀 Pipeline DevOps & Automação de Qualidade (Python)
 
+[![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub_Actions-2088FF?logo=githubactions&logoColor=white)](https://github.com/JeffersonTeles/DevOps/actions)
+[![Tests](https://img.shields.io/badge/Tests-pytest-0A9EDC?logo=pytest&logoColor=white)](https://docs.pytest.org/)
+[![Coverage](https://img.shields.io/badge/Coverage-pytest--cov-brightgreen)](https://pytest-cov.readthedocs.io/)
+[![Linter](https://img.shields.io/badge/Linter-Ruff-D7FF64?logo=ruff&logoColor=black)](https://docs.astral.sh/ruff/)
+[![Quality Gate](https://img.shields.io/badge/Quality_Gate-Enforced-success)](https://github.com/JeffersonTeles/DevOps)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 Projeto de automação e integração contínua (CI) em Python com pipeline de testes unitários, medição de cobertura de código, linting estático com Ruff, smoke testing de CLI e portão de qualidade (*quality gate*) automatizado via GitHub Actions.
 
 ---
